@@ -1,3 +1,5 @@
+// shortest path from source node to all other node in positive weighted Graph
+
 vector<int> dist(nax, inf);
 void dijkstra(int src) {
     set<pair<int, int>> s;
