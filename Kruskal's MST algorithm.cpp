@@ -1,3 +1,4 @@
+// Graph Representation = edge list method will be used because of sorting all edges by weight
 int mincost = 0;
 void kruskalsMST() {
 	DisjointSet dSet(nax);
