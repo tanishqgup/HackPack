@@ -27,7 +27,7 @@ struct primetheory {
         prime[2] = 0;
     }
     vector<int> primes;
-    void fill_primes(int limit) {
+    vector<int> fill_primes(int limit) {
         if (!isrunsievecalled) {
             cerr << "call runsieve() " << endl;
             exit(1);
@@ -37,7 +37,7 @@ struct primetheory {
                 primes.pb(i);
             }
         }
-        // return primes;
+        return primes;
     }
 
     vector<int> factorsieve;
@@ -60,21 +60,38 @@ struct primetheory {
         }
     }
 
-    vector<int> factorise(int elem) {
+    vector<pair<int, int>> convert_to_pairs(vector<int> &factors) {
+        sort(all(factors));
+        vector<pair<int, int>> to_return;
+        int prev = factors[0], cnt = 1;
+        for (int i = 1; i < sz(factors); i++) {
+            if (factors[i] == prev) {
+                cnt++;
+                continue;
+            }
+            to_return.pb({prev, cnt});
+            prev = factors[i], cnt = 1;
+        }
+        to_return.pb({prev, cnt});
+        return to_return;
+    }
+
+    vector<pair<int, int>> factorise(int elem) {
         if (!isfactorsievecalled) {
             cerr << "call factorsieve()" << endl;
             exit(1);
         }
+        if (elem == 1) return {{1, 1}};
         isfactorsievecalled = 1;
         vector<int> factors;
         while (factorsieve[elem] != 1) {
             factors.pb(factorsieve[elem]);
             elem /= factorsieve[elem];
         }
-        sort(all(factors));
-        return factors;
+        return convert_to_pairs(factors);
     }
-    vector<int> factorise1(int elem) {
+    vector<pair<int, int>> factorise1(int elem) {
+        if (elem == 1) return {{1, 1}};
         vector<int> factors;
         for (int i = 2; i * i <= elem; i++) {
             if (elem % i == 0) {
@@ -85,13 +102,16 @@ struct primetheory {
             }
         }
         if (elem > 1) factors.pb(elem);
-        sort(all(factors));
-        return factors;
+        return convert_to_pairs(factors);
+    }
+    vector<int> canocalise(int elem, bool single_element = false) {
+        vector<pair<int, int>> factors;
+        factors = (single_element ? factorise1(elem) : factorise(elem));
+        vector<int> ans;
+        for (int i = 0; i < sz(factors); i++) {
+            if (factors[i].ss & 1)
+                ans.pb(factors[i].ff);
+        }
+        return ans;
     }
 } ck;
-// ck.is_prime() = return a number is prime or not
-// ck.run_sieve() = initialize sieve with primes and not primes
-// ck.fill_prime() = fill all primes upto given range
-// ck.factorisesieve() = initialise factorisation sieve for numbers
-// ck.factorise() = return list of prime factorisation of given element
-// ck.factorise1() = return list of prime factorisation of single element
