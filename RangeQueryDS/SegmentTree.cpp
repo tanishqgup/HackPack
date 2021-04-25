@@ -1,13 +1,16 @@
 struct SegTree {
     int size;
     vector<int> tree;
+    int unit_element;
 
     void init(int n) {
         size = 1;
         while (size < n) {
             size *= 2;
         }
-        tree.assign(2 * size, 0LL);
+        #warning change unit_element accordingly
+        unit_element = 0;
+        tree.assign(2 * size, unit_element);
     }
 
     void build(vector<int> &a, int x, int lx, int rx) {
@@ -20,7 +23,7 @@ struct SegTree {
         int mid = (lx + rx) / 2;
         build(a, 2 * x + 1, lx, mid);
         build(a, 2 * x + 2, mid + 1, rx);
-        tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
+        tree[x] = merge(tree[2 * x + 1], tree[2 * x + 2]);
     }
 
     void build(vector<int> &a) {
@@ -28,12 +31,12 @@ struct SegTree {
     }
 
     int query(int x, int l, int r, int lx, int rx) {
-        if (r < lx || l > rx) return 0;
+        if (r < lx || l > rx) return unit_element;
         if (lx >= l && rx <= r) return tree[x];
         int mid = (lx + rx) / 2;
         int left = query(2 * x + 1, l, r, lx, mid);
         int right = query(2 * x + 2, l, r, mid + 1, rx);
-        return left + right;
+        return merge(left, right);
     }
 
     int query(int l, int r) {
@@ -49,11 +52,16 @@ struct SegTree {
         int mid = (lx + rx) / 2;
         update(2 * x + 1, lx, mid, l, r, v);
         update(2 * x + 2, mid + 1, rx, l, r, v);
-        tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
+        tree[x] = merge(tree[2 * x + 1], tree[2 * x + 2]);
     }
 
     void update(int i, int v) {
         update(0, 0, size - 1, i, i, v);
+    }
+
+    int merge(int a, int b) {
+        #warning change merge function accordingly
+        return a + b;
     }
 
 } st;
